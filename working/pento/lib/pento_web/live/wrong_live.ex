@@ -44,7 +44,7 @@ defmodule PentoWeb.WrongLive do
         socket,
         message: message,
         score: score,
-        time: time(),
+        time: time()
       )
     }
   end
