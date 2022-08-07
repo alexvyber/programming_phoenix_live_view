@@ -1,7 +1,7 @@
 defmodule PentoWeb.WrongLive do
   use PentoWeb, :live_view
 
-  def mount(_params, _session, socket) do
+  def mount(_params, session, socket) do
     {
       :ok,
       assign(
@@ -9,6 +9,8 @@ defmodule PentoWeb.WrongLive do
         score: 0,
         message: "Guess a number!",
         time: time(),
+        user: Pento.Accounts.get_user_by_session_token(session["user_token"]),
+        session_id: session["live_socket_id"],
         answer: answer()
       )
     }
@@ -63,6 +65,11 @@ defmodule PentoWeb.WrongLive do
         <% end %>
       </main>
       <%= live_patch "New Game", to: Routes.live_path(@socket, PentoWeb.WrongLive ) %>
+
+      <aside style="margin-top: 60px;">
+        <h3><%= @user.email %></h3>
+        <h3><%= @session_id %></h3>
+      </aside>
     """
   end
 end
