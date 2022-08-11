@@ -50,9 +50,18 @@ defmodule Pento.Catalog.Product.Query do
     query |> apply_age_group_filter(filter)
   end
 
+  def filter_by_gender_group(query \\ base(), filter) do
+    query |> apply_gender_filter(filter)
+  end
+
   def with_zero_ratings(query \\ base()) do
     query
     |> select([p], {p.name, 0})
+  end
+
+  defp apply_gender_filter(query, filter) do
+    query
+    |> where( [ p, r, u, d], d.gender == ^filter  )
   end
 
   # TODO This is really bad code.
