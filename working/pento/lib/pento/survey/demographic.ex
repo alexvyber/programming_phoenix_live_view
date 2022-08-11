@@ -3,7 +3,7 @@ defmodule Pento.Survey.Demographic do
   import Ecto.Changeset
 
   schema "demographics" do
-    field :gender, :string
+    field :gender, Ecto.Enum, values: [:male, :female]
     field :year_of_birth, :integer
     belongs_to :user, Pento.Accounts.User
 
@@ -15,8 +15,7 @@ defmodule Pento.Survey.Demographic do
     demographic
     |> cast(attrs, [:gender, :year_of_birth, :user_id])
     |> validate_required([:gender, :year_of_birth, :user_id])
-    |> validate_inclusion(:gender, ["male", "female"])
-    |> validate_inclusion(:year_of_birth, 1900..(Date.utc_today().year - 5))
+    |> validate_inclusion(:year_of_birth, 1900..Date.utc_today().year)
     |> unique_constraint(:user_id)
   end
 end
