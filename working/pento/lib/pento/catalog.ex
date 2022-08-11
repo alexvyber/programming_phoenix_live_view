@@ -118,4 +118,10 @@ defmodule Pento.Catalog do
     |> Product.unit_price_changeset(attrs)
     |> Repo.update()
   end
+
+  @doc false
+  def list_products_with_user_ratings(user) do
+    Product.Query.with_user_ratings(user)
+    |> Repo.all()
+  end
 end

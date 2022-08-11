@@ -31,7 +31,6 @@ defmodule PentoWeb.ProductLive.FormComponent do
           &upload_static_file(&1, socket)
         )
 
-
       {
         :noreply,
         socket
