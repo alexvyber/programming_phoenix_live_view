@@ -11,6 +11,7 @@ defmodule PentoWeb.SurveyResultsLive do
       :ok,
       socket
       |> assign(assigns)
+      |> assign_default_gender_filter()
       |> assign_default_age_group_filter()
       |> pipe_through_assigns()
     }
@@ -24,12 +25,30 @@ defmodule PentoWeb.SurveyResultsLive do
     |> assign_chart_svg()
   end
 
-  defp assign_products_with_average_ratings(socket) do
+  defp assign_products_with_average_ratings(
+         %{
+           assigns: %{
+             age_group_filter: age_group_filter,
+             gender_filter: gender_filter
+           }
+         } = socket
+       ) do
     socket
     |> assign(
       :products_with_average_ratings,
-      get_products_with_average_ratings(%{age_group_filter: socket.assigns.age_group_filter})
+      get_products_with_average_ratings(%{
+        age_group_filter: age_group_filter,
+        gender_filter: gender_filter
+      })
     )
+  end
+
+  def assign_default_gender_filter(socket) do
+    assign(socket, :gender_filter, "all")
+  end
+
+  def assign_gender_filter(socket, gender_filter) do
+    assign(socket, :gender_filter, gender_filter)
   end
 
   defp assign_default_age_group_filter(socket) do
@@ -71,6 +90,13 @@ defmodule PentoWeb.SurveyResultsLive do
         y_axis()
       )
     )
+  end
+
+  def handle_event("gender_filter", %{"gender_filter" => gender_filter}, socket) do
+    {:noreply,
+     socket
+     |> assign_gender_filter(gender_filter)
+     |> pipe_through_assigns()}
   end
 
   def handle_event("age_group_filter", %{"age_group_filter" => age_group_filter}, socket) do
@@ -121,7 +147,7 @@ defmodule PentoWeb.SurveyResultsLive do
   #   Contex.Dataset.new(data)
   # end
 
-  def render(assigns) do
+  def rendera(assigns) do
     ~H"""
     <main>
 
@@ -154,6 +180,59 @@ defmodule PentoWeb.SurveyResultsLive do
     </div>
 
     </main>
+    """
+  end
+
+  def render(assigns) do
+    ~H"""
+      <section>
+    <h1>Survey Results</h1>
+    <div id="survey-results-component">
+    <div class="container">
+    <div>
+    <.form
+      for={:gender_filter}
+      phx-change="gender_filter"
+      phx_target={@myself}
+      id={@id}>
+
+      <label>Filter by gender:</label>
+      <select name="gender_filter" id="gender_filter">
+        <%= for gender <- [ "female", "male"] do %>
+          <option value={ gender } selected = {@gender_filter == gender} >
+            <%= gender %>
+          </option>
+        <% end %>
+      </select>
+    </.form>
+    </div>
+    <div>
+     <.form
+       for={:age_group_filter}
+       phx-change="age_group_filter"
+       phx_target={@myself}
+       id={@id}>
+
+        <label>Filter by age group:</label>
+        <select name="age_group_filter" id="age_group_filter">
+          <%= for age_group <-
+                ["all", "18 and under", "18 to 25", "25 to 35", "35 and up"] do %>
+            <option
+              value={ age_group }
+              selected = {@age_group_filter == age_group} >
+                <%=age_group%>
+            </option>
+          <% end %>
+        </select>
+      </.form>
+    </div>
+    </div>
+    <div id="survey-results-chart">
+    <%= @chart_svg %>
+    </div>
+    </div>
+    </section>
+
     """
   end
 end
