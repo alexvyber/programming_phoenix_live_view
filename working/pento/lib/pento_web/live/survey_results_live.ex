@@ -11,8 +11,8 @@ defmodule PentoWeb.SurveyResultsLive do
       :ok,
       socket
       |> assign(assigns)
-      |> assign_default_gender_filter()
-      |> assign_default_age_group_filter()
+      |> assign_gender_filter()
+      |> assign_age_group_filter()
       |> pipe_through_assigns()
     }
   end
@@ -43,7 +43,11 @@ defmodule PentoWeb.SurveyResultsLive do
     )
   end
 
-  def assign_default_gender_filter(socket) do
+  def assign_gender_filter(%{assigns: %{gender_filter: gender_filter}} = socket) do
+    assign(socket, :gender_filter, gender_filter)
+  end
+
+  def assign_gender_filter(socket) do
     assign(socket, :gender_filter, "all")
   end
 
@@ -51,7 +55,11 @@ defmodule PentoWeb.SurveyResultsLive do
     assign(socket, :gender_filter, gender_filter)
   end
 
-  defp assign_default_age_group_filter(socket) do
+  defp assign_age_group_filter(%{assigns: %{age_group_filter: _age_group_filter}} = socket) do
+    socket
+  end
+
+  defp assign_age_group_filter(socket) do
     assign(socket, age_group_filter: "all")
   end
 
@@ -198,7 +206,7 @@ defmodule PentoWeb.SurveyResultsLive do
 
       <label>Filter by gender:</label>
       <select name="gender_filter" id="gender_filter">
-        <%= for gender <- [ "female", "male"] do %>
+        <%= for gender <- ["all", "female", "male"] do %>
           <option value={ gender } selected = {@gender_filter == gender} >
             <%= gender %>
           </option>

@@ -2,7 +2,7 @@ defmodule PentoWeb.SurveyLive do
   use PentoWeb, :live_view
   alias Pento.{Catalog, Accounts, Survey}
 
-  alias PentoWeb.EndPoint
+  alias PentoWeb.Endpoint
   @survey_results_topic "survey_results"
 
   @impl true
@@ -18,7 +18,7 @@ defmodule PentoWeb.SurveyLive do
 
   defp assign_user(socket, token) do
     IO.puts("Assign User with socket.private:")
-    IO.inspect(socket.private, label: :shit_shit)
+    # IO.inspect(socket.private, label: :shit_shit)
 
     assign_new(socket, :current_user, fn ->
       Accounts.get_user_by_session_token(token)
@@ -52,7 +52,7 @@ defmodule PentoWeb.SurveyLive do
          updated_product,
          product_index
        ) do
-    Endpoint.broadcast(@survey_results_topic, "raeting_created", %{})
+    Endpoint.broadcast(@survey_results_topic, "rating_created", %{})
 
     socket
     |> put_flash(:info, "Rating submitted successfully")

@@ -8,8 +8,6 @@ defmodule PentoWeb.RatingLive.Index do
   end
 
   def render(assigns) do
-    IO.inspect(assigns.products, label: :products_shit)
-
     ~H"""
     <h2>Ratings <%= if ratings_complete?(assigns.products) do "Yes" else "No" end %> </h2>
 
